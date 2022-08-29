@@ -1,0 +1,11 @@
+name: GameEventsManager
+version: '1.0'
+main: dev.timvn.gameeventsmanager.GameEventsManager
+api-version: 1.19
+commands:
+  event:
+    description: Start an event
+    usage: /<command> <RNGSurvival>
+  check:
+    description: Check the state of e. g. the GameManager
+    usage: /<command> <manager>
