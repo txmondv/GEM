@@ -7,38 +7,58 @@ import dev.timvn.gameeventsmanager.games.rngsurvival.listeners.RNGPlayerItemDrop
 import dev.timvn.gameeventsmanager.games.rngsurvival.listeners.RNGPlayerMoveListener;
 import dev.timvn.gameeventsmanager.games.rngsurvival.listeners.RNGBlockBreakListener;
 import dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameManager;
-import org.bukkit.Bukkit;
+import org.bukkit.*;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 
 public final class GameEventsManager extends JavaPlugin {
 
+
     // Plugin chat strings
     public static String PluginPrefix = "§8» §e§lGEM §8- §7";
     public static String noPermission = PluginPrefix + "§cYou do not have permission to perform this action.";
+
 
     // Manager security checks
     public static boolean managerBusy = false;
     public static String currentGame = "None";
 
 
-    // initialize RNGGameManager
-    private RNGGameManager RNGGameManager;
 
     @Override
     public void onEnable() {
         registerCommands();
         registerListeners();
+
+        // initialize config
+        getConfig().options().copyDefaults();
+        getConfig();
+
+        File worldFile = new File(getServer().getWorldContainer(), "RNGSurvival");
+        if (!worldFile.exists()) {
+            // create the world for RNGSurvival
+            WorldCreator wc = new WorldCreator("RNGSurvival");
+
+            wc.environment(World.Environment.NORMAL);
+            wc.type(WorldType.NORMAL);
+            wc.createWorld();
+
+            Location newWorldWorldSpawn = Bukkit.getWorld("RNGSurvival").getSpawnLocation();
+            getConfig().set("RNGSurvivalSpawn", newWorldWorldSpawn);
+            saveConfig();
+
+            getLogger().info("A new world has been created for RNGSurvival!");
+        }
+
+        getLogger().info("Successfully enabled the plugin.");
     }
 
     @Override
     public void onDisable() {
-        File dir = Bukkit.getWorld("RNGSurvival").getWorldFolder();
-        if(dir.isDirectory()) {
-            Bukkit.unloadWorld("RNGSurvival", true);
-            del(dir);
-        }
+        saveConfig();
+        getLogger().info("Successfully disabled the plugin.");
     }
 
 
@@ -50,20 +70,14 @@ public final class GameEventsManager extends JavaPlugin {
     }
 
     public void registerListeners() {
-        getServer().getPluginManager().registerEvents(new RNGBlockBreakListener(), this);
-        getServer().getPluginManager().registerEvents(new RNGPlayerMoveListener(), this);
-        getServer().getPluginManager().registerEvents(new RNGPlayerMoveListener(), this);
-        getServer().getPluginManager().registerEvents(new RNGPlayerItemDropListener(), this);
-        getServer().getPluginManager().registerEvents(new RNGCraftItemEvent(), this);
+        // less code = better
+        PluginManager pm = getServer().getPluginManager();
+
+        pm.registerEvents(new RNGBlockBreakListener(), this);
+        pm.registerEvents(new RNGPlayerMoveListener(), this);
+        pm.registerEvents(new RNGPlayerMoveListener(), this);
+        pm.registerEvents(new RNGPlayerItemDropListener(), this);
+        pm.registerEvents(new RNGCraftItemEvent(), this);
     }
 
-    public static void del(File file) {
-        for (File f : file.listFiles()) {
-            if (f.isDirectory())
-                del(f);
-            else
-                f.delete();
-        }
-        file.delete();
-    };
 }

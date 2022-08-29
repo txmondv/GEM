@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class BlockManager {
 
-    private RNGGameManager gameManager;
+    private final RNGGameManager gameManager;
 
     public BlockManager(RNGGameManager gameManager) {
         this.gameManager = gameManager;
@@ -29,8 +29,8 @@ public class BlockManager {
     }
 
     // create HasSets to store the blocks in
-    private static Set<Material> woodBreak = new HashSet<>();
-    private static Set<Material> mineBreak = new HashSet<>();
+    private static final Set<Material> woodBreak = new HashSet<>();
+    private static final Set<Material> mineBreak = new HashSet<>();
 
     // method to tell the user if a block is part of set, if so, display the event key
     public static String checkEvent(Block block) {

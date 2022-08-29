@@ -33,16 +33,14 @@ public class RNGCraftItemEvent implements Listener {
         if(!GameEventsManager.managerBusy || !Objects.equals(GameEventsManager.currentGame, "rngsurvival")) { return; }
 
 
+
         // Guard class: Cancel event if the GameState is not ACTIVE or PREDEATHMATCH
-        if(!RNGGameManager.allowBlockBreak) {
-            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§cPlease wait for the game to start!"));
-            event.setCancelled(true);
-            return;
-        }
+        if(!RNGGameManager.allowBlockBreak) { return; }
+
         String eventType = CraftManager.checkCraftingEvent(event.getCurrentItem());
         switch(eventType) {
             case "tool_craft_event":
-                int durability_percentage = ThreadLocalRandom.current().nextInt((int) 0.1, 1);;
+                int durability_percentage = ThreadLocalRandom.current().nextInt((int) 0.1, 1);
                 p.sendMessage(String.valueOf(durability_percentage));
 
                 ItemStack item = event.getCurrentItem();

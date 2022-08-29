@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class CraftManager {
 
-    private RNGGameManager gameManager;
+    private final RNGGameManager gameManager;
 
     public CraftManager(RNGGameManager gameManager) {
         this.gameManager = gameManager;
@@ -47,7 +47,7 @@ public class CraftManager {
     }
 
     // create HasSets to store the blocks in
-    private static Set<Material> toolSet = new HashSet<>();
+    private static final Set<Material> toolSet = new HashSet<>();
 
     // method to tell the user if a block is part of set, if so, display the event key
     public static String checkCraftingEvent(ItemStack item) {

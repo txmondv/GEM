@@ -47,7 +47,7 @@ public class RNGBlockBreakListener implements Listener {
 
         // Guard class: Cancel event if the GameState is not ACTIVE or PREDEATHMATCH
         if(!RNGGameManager.allowBlockBreak) {
-            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§cPlease wait for the game to start!"));
+            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§cYou cannot break blocks during this game phase!"));
             event.setCancelled(true);
             return;
         }
@@ -158,7 +158,6 @@ public class RNGBlockBreakListener implements Listener {
                 if ((int) (Math.random() * 10) + 1 != 1) {
                     break;
                 }
-                ;
                 int MineEventRolledNumber = RNGSurvival.dice(p);
 
                 // simply delay task by 4.25 seconds (time dice needs to run)

@@ -29,11 +29,7 @@ public class RNGPlayerItemDropListener implements Listener {
         if(!GameEventsManager.managerBusy || !Objects.equals(GameEventsManager.currentGame, "rngsurvival")) { return; }
 
         // Guard class: Cancel event if the GameState is not ACTIVE or PREDEATHMATCH
-        if(!RNGGameManager.allowBlockBreak) {
-            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§cPlease wait for the game to start!"));
-            event.setCancelled(true);
-            return;
-        }
+        if(!RNGGameManager.allowBlockBreak) { return; }
 
         // determine what to do:
         int doesDropCauseEvent = (int) (Math.random() * 50) + 1;

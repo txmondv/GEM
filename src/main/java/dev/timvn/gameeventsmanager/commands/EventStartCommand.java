@@ -61,9 +61,16 @@ public class EventStartCommand implements CommandExecutor {
                             }
                         } else {
                             sender.sendMessage(GameEventsManager.PluginPrefix + "RNGSurvival is not active/running.");
+                            sender.sendMessage(GameEventsManager.PluginPrefix + "Use '/check manager'.");
                             break;
                         }
 
+                    }
+
+
+                    if(GameEventsManager.managerBusy) {
+                        sender.sendMessage(GameEventsManager.PluginPrefix + "§cAnother event is already running!");
+                        return true;
                     }
 
                     sender.sendMessage(GameEventsManager.PluginPrefix + "You have started RNG-Survival.");

@@ -24,13 +24,7 @@ public class RNGPlayerMoveListener implements Listener {
         // Guard class: check if the game is RNGSurvival and security check to prevent bugs!
         if(!GameEventsManager.managerBusy || !Objects.equals(GameEventsManager.currentGame, "rngsurvival")) { return; }
 
-        // Guard class: Cancel event if the GameState is not ACTIVE or PREDEATHMATCH
-        if(!RNGGameManager.allowBlockBreak) {
-            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§cPlease wait for the game to start!"));
-            event.setCancelled(true);
-            return;
-        }
-
+        if(!RNGGameManager.allowBlockBreak) { return; }
 
         // Guard class: If dice is rolling, dont roll.
         if(diceRolling) { return; }
@@ -39,7 +33,7 @@ public class RNGPlayerMoveListener implements Listener {
         // if dice isnt already rolling and from 1/5000 the movement is selected to roll; roll!
         if((int) (Math.random() * 5000) + 1 == 1) {
             int rolledNumber = RNGSurvival.dice(p);
-        };
+        }
 
     }
 }
