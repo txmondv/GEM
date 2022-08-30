@@ -6,12 +6,12 @@ import dev.timvn.gameeventsmanager.games.rngsurvival.listeners.RNGCraftItemEvent
 import dev.timvn.gameeventsmanager.games.rngsurvival.listeners.RNGPlayerItemDropListener;
 import dev.timvn.gameeventsmanager.games.rngsurvival.listeners.RNGPlayerMoveListener;
 import dev.timvn.gameeventsmanager.games.rngsurvival.listeners.RNGBlockBreakListener;
-import dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameManager;
 import org.bukkit.*;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Objects;
 
 public final class GameEventsManager extends JavaPlugin {
 
@@ -29,6 +29,7 @@ public final class GameEventsManager extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // call methods external to improve readability
         registerCommands();
         registerListeners();
 
@@ -45,7 +46,7 @@ public final class GameEventsManager extends JavaPlugin {
             wc.type(WorldType.NORMAL);
             wc.createWorld();
 
-            Location newWorldWorldSpawn = Bukkit.getWorld("RNGSurvival").getSpawnLocation();
+            Location newWorldWorldSpawn = Objects.requireNonNull(Bukkit.getWorld("RNGSurvival")).getSpawnLocation();
             getConfig().set("RNGSurvivalSpawn", newWorldWorldSpawn);
             saveConfig();
 
