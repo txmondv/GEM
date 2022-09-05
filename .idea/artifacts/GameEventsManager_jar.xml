@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="GameEventsManager:jar">
-    <output-path>$USER_HOME$/Desktop/Coding/Java/Minecraft/Testserver/plugins</output-path>
-    <root id="archive" name="GameEventsManager.jar">
-      <element id="module-output" name="GameEventsManager" />
-    </root>
-  </artifact>
-</component>
