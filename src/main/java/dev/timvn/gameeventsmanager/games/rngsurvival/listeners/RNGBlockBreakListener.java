@@ -60,7 +60,7 @@ public class RNGBlockBreakListener implements Listener {
                     break;
                 }
 
-                int woodEventRolledNumber = RNGSurvival.dice(p);
+                int woodEventRolledNumber = RNGSurvival.roll(p);
 
                 // simply delay task by 4.25 seconds (time dice needs to run)
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -74,8 +74,9 @@ public class RNGBlockBreakListener implements Listener {
                                 // concept: Drop 20 to 40 Oak Logs
                                 int newOakLogsAmount = (int) ((Math.random() * (40 - 20)) + 20);
                                 ItemStack newLogs = new ItemStack(event.getBlock().getType(), newOakLogsAmount);
-                                event.setDropItems(false);
+                                p.sendMessage(String.valueOf(event.getBlock().getType()));
                                 p.getWorld().dropItemNaturally(event.getBlock().getLocation(), newLogs);
+                                event.setDropItems(false);
 
                                 p.sendMessage(Prefix + "You got amazingly lucky and rolled a §a" + woodEventRolledNumber + "§7!");
                                 p.sendMessage(Prefix + "As luck should be rewarded, you get §a" + newOakLogsAmount + " §7instead of 1 log!");
@@ -150,7 +151,7 @@ public class RNGBlockBreakListener implements Listener {
                                 break;
                         }
                     }
-                }, 70);
+                }, 70L);
 
             }
             case "mine_event" -> {
@@ -158,7 +159,7 @@ public class RNGBlockBreakListener implements Listener {
                 if ((int) (Math.random() * 10) + 1 != 1) {
                     break;
                 }
-                int MineEventRolledNumber = RNGSurvival.dice(p);
+                int MineEventRolledNumber = RNGSurvival.roll(p);
 
                 // simply delay task by 4.25 seconds (time dice needs to run)
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {

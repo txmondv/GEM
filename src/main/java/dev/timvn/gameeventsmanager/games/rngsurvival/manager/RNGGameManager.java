@@ -5,13 +5,15 @@ import dev.timvn.gameeventsmanager.games.rngsurvival.RNGSurvival;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.bukkit.scoreboard.*;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,18 +54,22 @@ public class RNGGameManager {
     public static String getGameState() {
         return currentGameState;
     }
-
-
+    public static boolean cancelMainTaskTimer = false;
 
 
     public void setGameState(RNGGameStates RNGGameStates) {
+
+        BukkitScheduler mainScheduler = Bukkit.getScheduler();
+        BukkitScheduler preDMScheduler = Bukkit.getScheduler();
+
+
         this.RNGGameStates = RNGGameStates;
         switch(RNGGameStates) {
             case STARTING:
                 currentGameState = "STARTING";
                 // Countdown Start!
 
-                final int[] countdownStarter = {5}; // SET TO 20 LATER, JUST BECUASE ITS ANNOYING WHEN TESTING
+                final int[] countdownStarter = {5}; // Game starting countdown
 
                 final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
                 final Runnable runnable = new Runnable() {
@@ -105,6 +111,9 @@ public class RNGGameManager {
                 scheduler.scheduleAtFixedRate(runnable, 0, 1, SECONDS);
                 // Countdown End!
 
+                Bukkit.getWorld("RNGSurvival").setStorm(false);
+                Bukkit.getWorld("RNGSurvival").setTime(1000);
+
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     @Override
                     public void run() {
@@ -117,6 +126,13 @@ public class RNGGameManager {
 
                             int coordsY = coords.getWorld().getHighestBlockYAt(coords.getBlockX(), coords.getBlockZ()) + 1;
                             coords.setY(coordsY);
+
+                            // ensure safe teleport to a solid block
+
+                            while(!coords.getBlock().getType().isSolid()) {
+                                coords.setX(coords.getX() + 1);
+                            }
+
                             p.teleport(coords);
                         }
 
@@ -133,11 +149,21 @@ public class RNGGameManager {
                 Bukkit.broadcastMessage(RNGSurvival.Prefix + "You now have §620 minutes §7until deathmatch starts.");
                 Bukkit.broadcastMessage(RNGSurvival.Prefix + "Good Luck! :)");
 
-                // set game time to 20 minutes
-                AtomicInteger mainGameTimer = new AtomicInteger(30);
+                cancelMainTaskTimer = false;
 
-                BukkitScheduler mainScheduler = Bukkit.getScheduler();
+                // set game time to 20 minutes (1200 seconds)
+                AtomicInteger mainGameTimer = new AtomicInteger(1200);
+
                 mainScheduler.runTaskTimer(plugin, mainTask -> {
+
+                    if(cancelMainTaskTimer) {
+                        mainScheduler.cancelTask(mainTask.getTaskId());
+                        for(Player p : Bukkit.getOnlinePlayers()){
+
+
+                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§cThe timer has expired."));
+                        }
+                    }
 
                     String timeString = String.format("%02d:%02d", (mainGameTimer.get() % 3600) / 60, mainGameTimer.get() % 60);
 
@@ -216,11 +242,10 @@ public class RNGGameManager {
                 Bukkit.getWorld("RNGSurvival").getWorldBorder().setCenter(coords);
                 Bukkit.getWorld("RNGSurvival").getWorldBorder().setSize(500);
 
-                // set pre dm time to 2 minutes
-                AtomicInteger preDMGameTimer = new AtomicInteger(20);
+                // set pre dm time to 2 minutes (120s)
+                AtomicInteger preDMGameTimer = new AtomicInteger(120);
 
 
-                BukkitScheduler preDMScheduler = Bukkit.getScheduler();
                 preDMScheduler.runTaskTimer(plugin, preDMTask -> {
 
                     String timeString = String.format("%02d:%02d", (preDMGameTimer.get() % 3600) / 60, preDMGameTimer.get() % 60);
@@ -276,16 +301,30 @@ public class RNGGameManager {
                 Bukkit.broadcastMessage(RNGSurvival.Prefix + "The game will automatically be terminated in 20 seconds.");
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     public void run() {
-                        // Players are sent back to main world
-                        World MainWorld = Bukkit.getServer().getWorld("world");
-                        Location toTeleport = MainWorld.getSpawnLocation();
-
-                        for(Player p : Bukkit.getOnlinePlayers()){
-                            p.teleport(toTeleport);
-                        }
                         setGameState(dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameStates.INACTIVE);
                     }
                 }, 400);
+
+
+                break;
+            case INACTIVE:
+                currentGameState = "INACTIVE";
+
+                cancelMainTaskTimer = true;
+
+                // Players are sent back to main world
+                World MainWorld = Bukkit.getServer().getWorld("world");
+                Location toTeleport = MainWorld.getSpawnLocation();
+
+                for(Player p : Bukkit.getOnlinePlayers()){
+                    p.teleport(toTeleport);
+
+                    if(p.getGameMode().equals(GameMode.SPECTATOR)) {
+                        p.setGameMode(GameMode.SURVIVAL);
+                    }
+
+                }
+
 
                 Location oldSpawnLocation = plugin.getConfig().getLocation("RNGSurvivalSpawn");
                 Location newSpawnLocation = oldSpawnLocation.add(10000, 0, 10000);
@@ -293,10 +332,7 @@ public class RNGGameManager {
                 plugin.getConfig().set("RNGSurvivalSpawn", newSpawnLocation);
                 plugin.saveConfig();
 
-                break;
-            case INACTIVE:
-                currentGameState = "INACTIVE";
-                Bukkit.broadcastMessage("RNGSURVIVAL is now inactive.");
+                Bukkit.broadcastMessage("GAME OVER!");
                 GameEventsManager.managerBusy = false;
                 GameEventsManager.currentGame = "None";
                 break;
@@ -328,15 +364,13 @@ public class RNGGameManager {
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
             public void run() {
-                setGameState(dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameStates.END);
+                setGameState(dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameStates.INACTIVE);
             }
         }, seconds * 20);
     }
 
 
-    public void cleanup() {
 
-    }
 
     public BlockManager getBlockManager() { return blockManager; }
     public CraftManager getCraftManager() { return craftManager; }

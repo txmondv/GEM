@@ -17,7 +17,7 @@ import static dev.timvn.gameeventsmanager.games.rngsurvival.RNGSurvival.diceRoll
 public class RNGPlayerMoveListener implements Listener {
 
     @EventHandler
-    private void onPlayerMove(PlayerMoveEvent event) {
+    private void onPlayerMove(PlayerMoveEvent event) throws InterruptedException {
 
         Player p = event.getPlayer();
 
@@ -32,7 +32,7 @@ public class RNGPlayerMoveListener implements Listener {
 
         // if dice isnt already rolling and from 1/5000 the movement is selected to roll; roll!
         if((int) (Math.random() * 5000) + 1 == 1) {
-            int rolledNumber = RNGSurvival.dice(p);
+            int rolledNumber = RNGSurvival.roll(p);
         }
 
     }

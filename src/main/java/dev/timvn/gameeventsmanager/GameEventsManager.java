@@ -2,10 +2,7 @@ package dev.timvn.gameeventsmanager;
 
 import dev.timvn.gameeventsmanager.commands.CheckStateCommand;
 import dev.timvn.gameeventsmanager.commands.EventStartCommand;
-import dev.timvn.gameeventsmanager.games.rngsurvival.listeners.RNGCraftItemEvent;
-import dev.timvn.gameeventsmanager.games.rngsurvival.listeners.RNGPlayerItemDropListener;
-import dev.timvn.gameeventsmanager.games.rngsurvival.listeners.RNGPlayerMoveListener;
-import dev.timvn.gameeventsmanager.games.rngsurvival.listeners.RNGBlockBreakListener;
+import dev.timvn.gameeventsmanager.games.rngsurvival.listeners.*;
 import org.bukkit.*;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,8 +34,7 @@ public final class GameEventsManager extends JavaPlugin {
         getConfig().options().copyDefaults();
         getConfig();
 
-        File worldFile = new File(getServer().getWorldContainer(), "RNGSurvival");
-        if (!worldFile.exists()) {
+        if (!new File(getServer().getWorldContainer(), "RNGSurvival").exists()) {
             // create the world for RNGSurvival
             WorldCreator wc = new WorldCreator("RNGSurvival");
 
@@ -51,6 +47,8 @@ public final class GameEventsManager extends JavaPlugin {
             saveConfig();
 
             getLogger().info("A new world has been created for RNGSurvival!");
+        } else {
+            getConfig().set("RNGSurvivalSpawn", getConfig().getLocation("RNGSurvivalSpawn"));
         }
 
         getLogger().info("Successfully enabled the plugin.");
@@ -79,6 +77,7 @@ public final class GameEventsManager extends JavaPlugin {
         pm.registerEvents(new RNGPlayerMoveListener(), this);
         pm.registerEvents(new RNGPlayerItemDropListener(), this);
         pm.registerEvents(new RNGCraftItemEvent(), this);
+        pm.registerEvents(new RNGPlayerDeathEvent(), this);
     }
 
 }
