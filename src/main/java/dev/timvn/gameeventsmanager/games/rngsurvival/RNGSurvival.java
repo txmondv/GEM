@@ -6,17 +6,10 @@ import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
-import static dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameManager.lastItemDropTime;
 
 public class RNGSurvival {
 
@@ -29,12 +22,14 @@ public class RNGSurvival {
     // possibility to check if the dice is rolling (e.g. to prevent double rolls)
     public static boolean diceRolling = false;
 
+    // public long to set the time the roll lasts centrally
+    public static long timeRollShouldLast = 50L;
 
     // store when the dice has been rolled
     public static LocalDateTime lastRollTime = LocalDateTime.now();
 
 
-
+    // old method to be deleted
     /*/public static int dice(Player p) throws InterruptedException {
 
         // timesRolled has to be an array because otherwise it could not be accessed from the scheduler
@@ -112,8 +107,8 @@ public class RNGSurvival {
 
             final int diceResult = /*/r.nextInt(20) + 1;/*/ 20;
 
-            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, 5000, false, false, false));
-            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 60, 128, false, false, false));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) timeRollShouldLast, 5000, false, false, false));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, (int) timeRollShouldLast, 128, false, false, false));
 
             final BukkitRunnable runnable = new BukkitRunnable() {
                 public void run() {
@@ -160,7 +155,7 @@ public class RNGSurvival {
                     }
 
                 }
-            }).runTaskLater(plugin, 70L);
+            }).runTaskLater(plugin, timeRollShouldLast); // timeRollShouldLast is set so that all delays are managed centrally
             runnable.runTaskTimer(plugin, 0L, 5L);
             return diceResult;
 

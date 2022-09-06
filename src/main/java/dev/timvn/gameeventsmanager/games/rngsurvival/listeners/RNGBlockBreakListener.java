@@ -9,7 +9,7 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -67,10 +67,40 @@ public class RNGBlockBreakListener implements Listener {
                     public void run() {
                         switch (woodEventRolledNumber) {
                             case 20:
-                                // concept:
+                                // concept: player enters god mode
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 4, false, false, false));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2400, 4, false, false, false));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 2400, 4, false, false, false));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 2400, 4, false, false, false));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 2400, 4, false, false, false));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 2400, 4, false, false, false));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 2400, 4, false, false, false));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2400, 4, false, false, false));
+
+                                p.sendMessage(Prefix + "You're blessed! You rolled a §c" + woodEventRolledNumber + "§7!");
+                                p.sendMessage(Prefix + "The gods hear your call and grant you their powers for 2 minutes!");
+                                break;
                             case 19:
-                                // concept:
+                                // concept: tree drops a block of diamond
+                                p.getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.DIAMOND_BLOCK,1 ));
+                                event.setDropItems(false);
+
+                                p.sendMessage(Prefix + "You got incredibly lucky and rolled a §c" + woodEventRolledNumber + "§7!");
+                                p.sendMessage(Prefix + "Your log turned into a §bdiamond block§7!");
+                                break;
                             case 18:
+                                // concept: drop DURABLE, super efficient iron axe
+                                ItemStack SuperIronAxe = new ItemStack(Material.IRON_AXE, 1);
+                                SuperIronAxe.addEnchantment(Enchantment.DURABILITY, 5);
+                                SuperIronAxe.addEnchantment(Enchantment.DIG_SPEED, 3);
+                                SuperIronAxe.addEnchantment(Enchantment.MENDING, 1);
+
+                                p.getWorld().dropItemNaturally(event.getBlock().getLocation(), SuperIronAxe);
+
+                                p.sendMessage(Prefix + "You got unbelievably lucky and rolled a §c" + woodEventRolledNumber + "§7!");
+                                p.sendMessage(Prefix + "As a reward, your tree dropped a super iron axe!");
+                                break;
+                            case 17:
                                 // concept: Drop 20 to 40 Oak Logs
                                 int newOakLogsAmount = (int) ((Math.random() * (40 - 20)) + 20);
                                 ItemStack newLogs = new ItemStack(event.getBlock().getType(), newOakLogsAmount);
@@ -81,10 +111,17 @@ public class RNGBlockBreakListener implements Listener {
                                 p.sendMessage(Prefix + "You got amazingly lucky and rolled a §a" + woodEventRolledNumber + "§7!");
                                 p.sendMessage(Prefix + "As luck should be rewarded, you get §a" + newOakLogsAmount + " §7instead of 1 log!");
                                 break;
-                            case 17:
-                                // concept:
                             case 16:
-                                // concept:
+                                // concept: 3 tree allays
+
+                                Allay treeAllay = (Allay) p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.ALLAY);
+                                treeAllay.setTarget(p);
+                                treeAllay.setCustomName("§aThe Allay of the tree");
+                                treeAllay.setCustomNameVisible(true);
+
+                                p.sendMessage(Prefix + "You rolled a §c" + woodEventRolledNumber + "§7!");
+                                p.sendMessage(Prefix + "Therefore, the Allay of the tree companion you!");
+                                break;
                             case 15:
                                 // concept: Give Haste for a while
                                 int AmountOfTicksThatHasteIsGranted = (int) ((Math.random() * (4500 - 1500)) + 1500);
@@ -95,17 +132,55 @@ public class RNGBlockBreakListener implements Listener {
                                 p.sendMessage(Prefix + "Because your tree likes this number, you get " + AmountOfTicksThatHasteIsGranted / 20 + " seconds of Haste III!");
                                 break;
                             case 14:
-                                // concept:
+                                // concept: spawn iron golem
+
+                                IronGolem theguard = (IronGolem) p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.IRON_GOLEM);
+                                theguard.setGlowing(true);
+                                theguard.setCustomName("§aGuardian of the woods");
+                                theguard.setCustomNameVisible(true);
+
+
+                                p.sendMessage(Prefix + "You got kind of lucky and rolled a §6" + woodEventRolledNumber + "§7!");
+                                p.sendMessage(Prefix + "Be guarded during your further farming!");
+                                break;
                             case 13:
-                                // concept:
+                                // concept: drop extra apples
+                                p.getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.APPLE, (int) ((Math.random() * (8 - 3)) + 3)));
+
+                                p.sendMessage(Prefix + "You rolled a §6" + woodEventRolledNumber + "§.");
+                                p.sendMessage(Prefix + "This log contained an apple to be dropped, take what you can carry!");
+                                break;
                             case 12:
-                                // concept:
+                                // concept: drop coal
+                                event.setDropItems(false);
+                                p.getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.COAL, (int) ((Math.random() * (8 - 3)) + 3)));
+
+                                p.sendMessage(Prefix + "Thats a §6" + woodEventRolledNumber + "§.");
+                                p.sendMessage(Prefix + "Due to industrialization the log got turned into coal!");
+                                break;
                             case 11:
-                                // concept:
+                                // concept: block respawns AND drops
+                                event.setCancelled(true);
+                                p.getInventory().addItem(new ItemStack(event.getBlock().getType(), 1));
+
+                                p.sendMessage(Prefix + "We take that, you rolled a §6" + woodEventRolledNumber + "§!");
+                                p.sendMessage(Prefix + "Just keep going, here is another block.");
+                                break;
                             case 10:
-                                // concept:
+                                // concept: block simply respawns
+                                event.setCancelled(true);
+
+                                p.sendMessage(Prefix + "Hm, can't really say much about a §6" + woodEventRolledNumber + "§...");
+                                p.sendMessage(Prefix + "Let's just forget it.");
+                                break;
                             case 9:
-                                // concept:
+                                // concept: drop paper
+                                event.setDropItems(false);
+                                p.getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.PAPER, (int) ((Math.random() * (8 - 3)) + 3)));
+
+                                p.sendMessage(Prefix + "Thats a §6" + woodEventRolledNumber + "§.");
+                                p.sendMessage(Prefix + "Due to industrialization the log got turned into paper!");
+                                break;
                             case 8:
                                 // concept:
                             case 7:
@@ -113,9 +188,17 @@ public class RNGBlockBreakListener implements Listener {
                             case 6:
                                 // concept:
                             case 5:
-                                // concept:
+                                // concept: set the tree on fire
                             case 4:
-                                // concept:
+                                // concept: bad effects (a lot)
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) ((Math.random() * (2400 - 600)) + 600), 2, false, false, false));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, (int) ((Math.random() * (2400 - 600)) + 600), 2, false, false, false));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, (int) ((Math.random() * (2400 - 600)) + 600), 2, false, false, false));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, (int) ((Math.random() * (2400 - 600)) + 600), 1, false, false, false));
+
+                                p.sendMessage(Prefix + "You got very unlucky and rolled a §c" + woodEventRolledNumber + "§7!");
+                                p.sendMessage(Prefix + "Seemingly, the tree master didn't want you to break that block and cussed a little...");
+                                break;
                             case 3:
                                 // concept: spawn bees!
                                 int BeeSwarmSize = (int) ((Math.random() * 20) + 1);
@@ -144,14 +227,30 @@ public class RNGBlockBreakListener implements Listener {
                                 p.sendMessage(Prefix + "You unfortunately hit a bee nest §7§linside of §7the tree... §cNow they are angry!");
                                 break;
                             case 2:
-                                // concept:
+                                // concept: spawn warden
                             case 1:
-                                // concept:
+                                // concept: players health is set to 3 hearts (6hp), monster army spawns, and he gets slowness (?)
+                                p.setHealth(6);
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 600, 69, false, false, false));
+
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.SKELETON);
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.SKELETON);
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.SKELETON);
+
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.CREEPER);
+
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.ZOMBIE);
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.ZOMBIE);
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.ZOMBIE);
+
+                                p.sendMessage(Prefix + "Your unlucky is incredible, you rolled a §c" + woodEventRolledNumber + "§7!");
+                                p.sendMessage(Prefix + "Deal with your destiny!");
+                                break;
                             default:
                                 break;
                         }
                     }
-                }, 70L);
+                }, timeRollShouldLast);
 
             }
             case "mine_event" -> {
@@ -204,7 +303,7 @@ public class RNGBlockBreakListener implements Listener {
                                 p.sendMessage(Prefix + "Still, your block has turned into lava ^^");
                                 break;
                             case 6, 7, 8:
-                                int tempRandomNumber3 = (int) ((Math.random() * (400 - 200)) + 1);
+                                int tempRandomNumber3 = (int) ((Math.random() * (400 - 200)) + 200);
                                 p.addPotionEffect(PotionEffectType.POISON.createEffect(tempRandomNumber3, 1));
                                 p.getLocation().getBlock().setType(Material.COBWEB);
                                 Endermite spider = (Endermite) p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.ENDERMITE);
@@ -237,15 +336,15 @@ public class RNGBlockBreakListener implements Listener {
 
                                 break;
                             case 2:
-                                Skeleton skeleton1 = (Skeleton) p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.SKELETON);
-                                Skeleton skeleton2 = (Skeleton) p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.SKELETON);
-                                Skeleton skeleton3 = (Skeleton) p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.SKELETON);
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.SKELETON);
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.SKELETON);
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.SKELETON);
 
-                                Creeper creeper = (Creeper) p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.CREEPER);
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.CREEPER);
 
-                                Zombie zombie1 = (Zombie) p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.ZOMBIE);
-                                Zombie zombie2 = (Zombie) p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.ZOMBIE);
-                                Zombie zombie3 = (Zombie) p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.ZOMBIE);
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.ZOMBIE);
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.ZOMBIE);
+                                p.getWorld().spawnEntity(event.getBlock().getLocation(), EntityType.ZOMBIE);
 
                                 p.sendMessage(Prefix + "You got very unlucky and rolled a §4" + MineEventRolledNumber + "§7!");
                                 p.sendMessage(Prefix + "Good luck with these bad bois §o°_°");
@@ -269,7 +368,7 @@ public class RNGBlockBreakListener implements Listener {
                                 break;
                         }
                     }
-                }, 70);
+                }, timeRollShouldLast);
             }
             default -> {
             }

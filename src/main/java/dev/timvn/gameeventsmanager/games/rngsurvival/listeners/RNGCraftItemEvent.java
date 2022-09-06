@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static dev.timvn.gameeventsmanager.games.rngsurvival.RNGSurvival.Prefix;
+import static dev.timvn.gameeventsmanager.games.rngsurvival.RNGSurvival.timeRollShouldLast;
 
 
 public class RNGCraftItemEvent implements Listener {
@@ -131,7 +132,7 @@ public class RNGCraftItemEvent implements Listener {
 
                     p.getWorld().dropItem(p.getLocation(), itemStack).setPickupDelay(0);
                 }
-            }).runTaskLater(plugin, 70L);
+            }).runTaskLater(plugin, timeRollShouldLast);
         }
     }
 
