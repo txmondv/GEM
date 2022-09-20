@@ -5,14 +5,12 @@ import dev.timvn.gameeventsmanager.games.rngsurvival.RNGSurvival;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
+
+import org.bukkit.block.Biome;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.*;
+
 
 import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
@@ -63,6 +61,7 @@ public class RNGGameManager {
         BukkitScheduler mainScheduler = Bukkit.getScheduler();
         BukkitScheduler preDMScheduler = Bukkit.getScheduler();
 
+        Location coords = plugin.getConfig().getLocation("RNGSurvivalSpawn");
 
         this.RNGGameStates = RNGGameStates;
         switch(RNGGameStates) {
@@ -73,45 +72,42 @@ public class RNGGameManager {
                 final int[] countdownStarter = {5}; // Game starting countdown
 
                 final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-                final Runnable runnable = new Runnable() {
+                final Runnable runnable = () -> {
 
+                    countdownStarter[0]--;
 
-                    public void run() {
-
-                        countdownStarter[0]--;
-
-                        // Default case: The countdown is still going (20-1); Display the remaining time
-                        if(countdownStarter[0] > 0) {
-                            for(Player p : Bukkit.getOnlinePlayers()){
-                                p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7The game is starting in §e" + countdownStarter[0] + " §7seconds."));
-                            }
+                    // Default case: The countdown is still going (20-1); Display the remaining time
+                    if(countdownStarter[0] > 0) {
+                        for(Player p : Bukkit.getOnlinePlayers()){
+                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7The game is starting in §e" + countdownStarter[0] + " §7seconds."));
                         }
+                    }
 
-                        // Special case: The countdown is exactly at 1; display "starting in 1 second" :)
-                        if (countdownStarter[0] == 1) {
-                            for(Player p : Bukkit.getOnlinePlayers()){
-                                p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7The game is starting in §e" + countdownStarter[0] + " §7second."));
-                            }
+                    // Special case: The countdown is exactly at 1; display "starting in 1 second" :)
+                    if (countdownStarter[0] == 1) {
+                        for(Player p : Bukkit.getOnlinePlayers()){
+                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7The game is starting in §e" + countdownStarter[0] + " §7second."));
                         }
+                    }
 
-                        // Special case: The countdown is exactly at 0; Don't display "starting in 0 seconds" :)
-                        if (countdownStarter[0] == 0) {
-                            for(Player p : Bukkit.getOnlinePlayers()){
-                                p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7Starting..."));
-                            }
+                    // Special case: The countdown is exactly at 0; Don't display "starting in 0 seconds" :)
+                    if (countdownStarter[0] == 0) {
+                        for(Player p : Bukkit.getOnlinePlayers()){
+                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7Starting..."));
                         }
+                    }
 
-                        // Special case: The countdown is lower than zero: set game state & shutdown the scheduler
-                        if (countdownStarter[0] < 0) {
-                            // GameState can now change
-                            setGameState(dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameStates.ACTIVE);
-                            scheduler.shutdown();
-                        }
+                    // Special case: The countdown is lower than zero: set game state & shutdown the scheduler
+                    if (countdownStarter[0] < 0) {
+                        // GameState can now change
+                        setGameState(dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameStates.ACTIVE);
+                        scheduler.shutdown();
                     }
                 };
                 scheduler.scheduleAtFixedRate(runnable, 0, 1, SECONDS);
                 // Countdown End!
 
+                // prevent bad weather or night
                 Bukkit.getWorld("RNGSurvival").setStorm(false);
                 Bukkit.getWorld("RNGSurvival").setTime(1000);
 
@@ -130,7 +126,7 @@ public class RNGGameManager {
 
                             // ensure safe teleport to a solid block
 
-                            while(!coords.getBlock().getType().isSolid()) {
+                            while(!coords.getBlock().getType().isSolid() && coords.getBlock().getBiome().equals(Biome.ICE_SPIKES)) {
                                 coords.setX(coords.getX() + 1);
                             }
 
@@ -242,11 +238,11 @@ public class RNGGameManager {
                 Bukkit.broadcastMessage(RNGSurvival.Prefix + "During this time, you cannot attack other players.");
                 Bukkit.broadcastMessage(RNGSurvival.Prefix + "§cBe careful: During deathmatch, you can no longer break blocks.");
 
-                Location coords = plugin.getConfig().getLocation("RNGSurvivalSpawn");
                 for(Player p : Bukkit.getOnlinePlayers()){
-
-                    p.sendTitle("§cDeathmatch begins soon!", "§6Prepare for the fight!", 10, 80, 10);
-                    p.playSound(p.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_7, 2, 1);
+                    if(p.getGameMode() != GameMode.SPECTATOR) {
+                        p.sendTitle("§cDeathmatch begins soon!", "§6Prepare for the fight!", 10, 80, 10);
+                        p.playSound(p.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_7, 2, 1);
+                    }
 
                     int coordsY = coords.getWorld().getHighestBlockYAt(coords.getBlockX(), coords.getBlockZ()) + 1;
                     coords.setY(coordsY);
@@ -259,6 +255,7 @@ public class RNGGameManager {
                 // set pre dm time to 2 minutes (120s)
                 AtomicInteger preDMGameTimer = new AtomicInteger(120);
 
+                coords.getWorld().setPVP(false);
 
                 preDMScheduler.runTaskTimer(plugin, preDMTask -> {
 
@@ -307,7 +304,19 @@ public class RNGGameManager {
             case DEATHMATCH:
                 allowBlockBreak = false;
                 currentGameState = "DEATHMATCH";
-                Bukkit.broadcastMessage("Deathmatch has begun.");
+
+                coords.getWorld().setPVP(true);
+                // let the world border shrink to 50 diameter in 300 seconds
+                Bukkit.getWorld("RNGSurvival").getWorldBorder().setSize(50, 300);
+
+                for(Player p : Bukkit.getOnlinePlayers()){
+                    if(p.getGameMode() != GameMode.SPECTATOR) {
+                        p.sendTitle("§cDeathmatch begins!", "§6FIGHT!", 10, 80, 10);
+                        p.playSound(p.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_3, 2, 1);
+                    }
+                }
+
+                Bukkit.broadcastMessage(RNGSurvival.Prefix + "Deathmatch has begun!");
                 break;
             case END:
                 currentGameState = "END";

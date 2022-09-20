@@ -143,8 +143,6 @@ public class RNGBlockBreakListener implements Listener {
                                 break;
                             case 14:
                                 // concept: spawn iron golem
-
-
                                 IronGolem theguard = (IronGolem) p.getWorld().spawnEntity(spawnlocation, EntityType.IRON_GOLEM);
                                 theguard.setGlowing(true);
                                 theguard.setCustomName("§aGuardian of the woods");
@@ -193,13 +191,36 @@ public class RNGBlockBreakListener implements Listener {
                                 p.sendMessage(Prefix + "Due to industrialization the log got turned into paper!");
                                 break;
                             case 8:
-                                // concept:
+                                // concept: nausea
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 600, 69, false, false, false));
+
+                                p.sendMessage(Prefix + "You rolled a §6" + woodEventRolledNumber + "§7.");
+                                p.sendMessage(Prefix + "This tree was disgusting, you earned diary!");
+                                break;
                             case 7:
-                                // concept:
+                                // concept: take random item from inventory
+                                ItemStack itemInRandomSlot = Objects.requireNonNull(p.getInventory().getItem((int) ((Math.random() * (20 - 1)) + 1)));
+                                itemInRandomSlot.setAmount(0);
+
+                                p.sendMessage(Prefix + "Meh, you rolled a §c" + woodEventRolledNumber + "§7.");
+                                p.sendMessage(Prefix + "The fairies of the woods have taken §6" + itemInRandomSlot.getType() + " §7from your inventory.");
+                                break;
                             case 6:
-                                // concept:
+                                // concept: blindness
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 600, 69, false, false, false));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 600, 69, false, false, false));
+
+                                p.sendMessage(Prefix + "You didn't get lucky and rolled a §c" + woodEventRolledNumber + "§7!");
+                                p.sendMessage(Prefix + "This was a damned log, you got blinded.");
+                                break;
                             case 5:
                                 // concept: set the tree on fire
+                                p.getWorld().createExplosion(event.getBlock().getLocation(), 1, true);
+
+
+                                p.sendMessage(Prefix + "You got unlucky and rolled a §c" + woodEventRolledNumber + "§7!");
+                                p.sendMessage(Prefix + "You set the tree on fire?!");
+                                break;
                             case 4:
                                 // concept: bad effects (many)
                                 p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) ((Math.random() * (2400 - 600)) + 600), 2, false, false, false));
@@ -239,6 +260,15 @@ public class RNGBlockBreakListener implements Listener {
                                 break;
                             case 2:
                                 // concept: spawn warden
+                                Warden warden = (Warden) p.getWorld().spawnEntity(spawnlocation, EntityType.WARDEN);
+                                warden.setGlowing(true);
+                                warden.setCustomName("§cWarden of the Woods");
+                                warden.setCustomNameVisible(true);
+
+
+                                p.sendMessage(Prefix + "You got super unlucky and rolled a §c" + woodEventRolledNumber + "§7!");
+                                p.sendMessage(Prefix + "You should run. Run. Far away.");
+                                break;
                             case 1:
                                 // concept: players health is set to 3 hearts (6hp), monster army spawns, and he gets slowness (?)
                                 p.setHealth(6);
