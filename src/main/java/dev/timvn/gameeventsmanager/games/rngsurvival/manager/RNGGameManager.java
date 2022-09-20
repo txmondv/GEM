@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.*;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
@@ -150,6 +151,19 @@ public class RNGGameManager {
                 Bukkit.broadcastMessage(RNGSurvival.Prefix + "Good Luck! :)");
 
                 cancelMainTaskTimer = false;
+
+                /*/ScoreboardManager manager = Bukkit.getScoreboardManager();
+                Scoreboard scoreboard = manager.getNewScoreboard();
+
+                Objective objective = scoreboard.registerNewObjective("RNGSurvival", "dummy", "§e§lRNGSurvival");
+                objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+                Score score = objective.getScore("§aHi");
+                score.setScore(1);
+
+                for(Player p : Bukkit.getOnlinePlayers()){
+                    p.setScoreboard(scoreboard);
+                }/*/
 
                 // set game time to 20 minutes (1200 seconds)
                 AtomicInteger mainGameTimer = new AtomicInteger(1200);

@@ -105,7 +105,7 @@ public class RNGSurvival {
     public static int roll(final Player p) {
         if(!p.getGameMode().equals(GameMode.CREATIVE) && !p.getGameMode().equals(GameMode.SPECTATOR)) {
 
-            final int diceResult = /*/r.nextInt(20) + 1;/*/ 20;
+            final int diceResult = r.nextInt(20) + 1;
 
             p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) timeRollShouldLast, 5000, false, false, false));
             p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, (int) timeRollShouldLast, 128, false, false, false));
