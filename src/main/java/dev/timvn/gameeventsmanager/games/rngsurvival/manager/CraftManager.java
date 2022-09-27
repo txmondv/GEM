@@ -1,8 +1,6 @@
 package dev.timvn.gameeventsmanager.games.rngsurvival.manager;
 
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;

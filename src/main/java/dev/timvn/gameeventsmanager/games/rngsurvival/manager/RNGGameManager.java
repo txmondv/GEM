@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
 
+import java.nio.channels.NonWritableChannelException;
 import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -23,6 +24,9 @@ public class RNGGameManager {
 
     // disable block breaking and moving (!?) for all phases except active/predeathmatch
     public static boolean allowBlockBreak = true;
+
+    // only let rolls start during rolls
+    public static boolean startRollingActions = false;
 
     // initialize the plugin for later use
     private final GameEventsManager plugin;
@@ -58,6 +62,7 @@ public class RNGGameManager {
 
     public void setGameState(RNGGameStates RNGGameStates) {
 
+        // declare schedulers here to make them accessible from every state
         BukkitScheduler mainScheduler = Bukkit.getScheduler();
         BukkitScheduler preDMScheduler = Bukkit.getScheduler();
 
@@ -141,6 +146,7 @@ public class RNGGameManager {
                 break;
             case ACTIVE:
                 allowBlockBreak = true;
+                startRollingActions = true;
                 currentGameState = "ACTIVE";
                 Bukkit.broadcastMessage(RNGSurvival.Prefix + "The game has started.");
                 Bukkit.broadcastMessage(RNGSurvival.Prefix + "You now have §620 minutes §7until deathmatch starts.");
@@ -169,8 +175,6 @@ public class RNGGameManager {
                     if(cancelMainTaskTimer) {
                         mainScheduler.cancelTask(mainTask.getTaskId());
                         for(Player p : Bukkit.getOnlinePlayers()){
-
-
                             p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§cThe timer has expired."));
                         }
                     }
@@ -180,11 +184,9 @@ public class RNGGameManager {
                     //  Default case: The countdown is still goin
                     if(mainGameTimer.get() > 0) {
                         for(Player p : Bukkit.getOnlinePlayers()){
-
-
                             p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7Time until end-game: " + timeString));
-                            mainGameTimer.getAndDecrement();
                         }
+                        mainGameTimer.getAndDecrement();
                     }
 
                     if(mainGameTimer.get() == 599) {
@@ -213,8 +215,8 @@ public class RNGGameManager {
                         Bukkit.broadcastMessage(RNGSurvival.Prefix + "End-game starts in 1 second!");
                         for(Player p : Bukkit.getOnlinePlayers()){
                             p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7End-game is starting!"));
-                            mainGameTimer.getAndDecrement();
                         }
+                        mainGameTimer.getAndDecrement();
                     }
 
 
@@ -231,6 +233,7 @@ public class RNGGameManager {
                 break;
             case PREDEATHMATCH:
                 allowBlockBreak = true;
+                startRollingActions = false;
                 currentGameState = "PREDEATHMATCH";
                 Bukkit.broadcastMessage(RNGSurvival.Prefix + "End-game has begun!");
                 Bukkit.broadcastMessage(RNGSurvival.Prefix + "The border is now way smaller (§c500 blocks §7diameter)");
@@ -264,11 +267,10 @@ public class RNGGameManager {
                     //  Default case: The countdown is still goin
                     if(preDMGameTimer.get() > 0) {
                         for(Player p : Bukkit.getOnlinePlayers()){
-
-
                             p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7Time until deathmatch: " + timeString));
-                            preDMGameTimer.getAndDecrement();
                         }
+
+                        preDMGameTimer.getAndDecrement();
                     }
 
                     if(preDMGameTimer.get() == 60) {
@@ -288,8 +290,9 @@ public class RNGGameManager {
                     if (preDMGameTimer.get() == 0) {
                         for(Player p : Bukkit.getOnlinePlayers()){
                             p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7Deathmatch is starting!"));
-                            preDMGameTimer.getAndDecrement();
                         }
+
+                        preDMGameTimer.getAndDecrement();
                     }
 
                     // Special case: The countdown is lower than zero
@@ -302,7 +305,8 @@ public class RNGGameManager {
 
                 break;
             case DEATHMATCH:
-                allowBlockBreak = false;
+                allowBlockBreak = true;
+                startRollingActions = false;
                 currentGameState = "DEATHMATCH";
 
                 coords.getWorld().setPVP(true);
@@ -334,6 +338,7 @@ public class RNGGameManager {
                 currentGameState = "INACTIVE";
 
                 cancelMainTaskTimer = true;
+                startRollingActions = false;
 
                 // Players are sent back to main world
                 World MainWorld = Bukkit.getServer().getWorld("world");
@@ -377,7 +382,7 @@ public class RNGGameManager {
     }
 
     public void stopGame(CommandSender sender, Integer seconds) {
-        Bukkit.broadcastMessage(RNGSurvival.Prefix + ChatColor.RED + sender.getName() + " §7has stopped the game.");
+        Bukkit.broadcastMessage(RNGSurvival.Prefix + "§c" + sender.getName() + " §7has stopped the game.");
         if(seconds > 0) {
             Bukkit.broadcastMessage(RNGSurvival.Prefix + "The game will stop in " + seconds + " seconds.");
         } else {
@@ -391,7 +396,6 @@ public class RNGGameManager {
             }
         }, seconds * 20);
     }
-
 
 
 

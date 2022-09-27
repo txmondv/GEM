@@ -2,30 +2,18 @@ package dev.timvn.gameeventsmanager.games.rngsurvival.listeners;
 
 import dev.timvn.gameeventsmanager.GameEventsManager;
 import dev.timvn.gameeventsmanager.games.rngsurvival.RNGSurvival;
-import dev.timvn.gameeventsmanager.games.rngsurvival.manager.BlockManager;
 
-import dev.timvn.gameeventsmanager.games.rngsurvival.manager.CraftManager;
-import dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameManager;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Bee;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 
-import static dev.timvn.gameeventsmanager.games.rngsurvival.RNGSurvival.Prefix;
 import static dev.timvn.gameeventsmanager.games.rngsurvival.RNGSurvival.timeRollShouldLast;
 
 
@@ -59,15 +47,15 @@ public class RNGCraftItemEvent implements Listener {
             p.closeInventory();
             (new BukkitRunnable() {
                 public void run() {
-                    Damageable meta = (Damageable)itemStack.getItemMeta();
-                    double maxDurability = (double)itemStack.getType().getMaxDurability();
+                    Damageable meta = (Damageable) itemStack.getItemMeta();
+                    double maxDurability = itemStack.getType().getMaxDurability();
                     double damage = maxDurability - (maxDurability / 16.0 + maxDurability / 20.0 * (double)result);
                     if (damage < 0.0) {
                         damage = 0.0;
                     }
 
                     meta.setDamage((int)damage);
-                    itemStack.setItemMeta((ItemMeta)meta);
+                    itemStack.setItemMeta(meta);
 
                     switch (result) {
                         case 20:
@@ -89,6 +77,7 @@ public class RNGCraftItemEvent implements Listener {
                             }
                         case 19:
                             // concept:
+
                         case 18:
                             // concept:
                         case 17:

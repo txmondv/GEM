@@ -3,8 +3,6 @@ package dev.timvn.gameeventsmanager.games.rngsurvival.listeners;
 import dev.timvn.gameeventsmanager.GameEventsManager;
 import dev.timvn.gameeventsmanager.games.rngsurvival.RNGSurvival;
 import dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameManager;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,13 +27,13 @@ public class RNGPlayerItemDropListener implements Listener {
         if(!GameEventsManager.managerBusy || !Objects.equals(GameEventsManager.currentGame, "rngsurvival")) { return; }
 
         // Guard class: Cancel event if the GameState is not ACTIVE or PREDEATHMATCH
-        if(!RNGGameManager.allowBlockBreak) { return; }
+        if(!RNGGameManager.startRollingActions) { return; }
 
         // determine what to do:
         int doesDropCauseEvent = (int) (Math.random() * 50) + 1;
         int itemAmount = event.getItemDrop().getItemStack().getAmount();
 
-        // prevent spamming/abusing by adding a 5 second cooldown
+        // prevent spamming/abusing by adding a 5-second cool down
         if(lastItemDropTime != null) {
             Duration duration = Duration.between(lastItemDropTime, LocalDateTime.now());
             if(duration.toSeconds() < 5) { return; }

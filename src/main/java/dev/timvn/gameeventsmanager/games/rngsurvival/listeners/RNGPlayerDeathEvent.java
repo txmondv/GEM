@@ -2,6 +2,8 @@ package dev.timvn.gameeventsmanager.games.rngsurvival.listeners;
 
 import dev.timvn.gameeventsmanager.GameEventsManager;
 import dev.timvn.gameeventsmanager.games.rngsurvival.RNGSurvival;
+import dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameManager;
+import dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameStates;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -31,6 +33,11 @@ public class RNGPlayerDeathEvent implements Listener {
                 if(alive.getGameMode().equals(GameMode.SURVIVAL)) {
                     Players.add(alive);
                 }
+            }
+
+            if(Players.size() == 1) {
+                Bukkit.broadcastMessage(RNGSurvival.Prefix + "§a" + Players.get(0).getDisplayName() + " §7has won the game!");
+                // ToDo: Cancel game
             }
 
             EntityDamageEvent lastDamageCause = e.getEntity().getLastDamageCause();
