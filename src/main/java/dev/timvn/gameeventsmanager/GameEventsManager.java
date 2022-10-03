@@ -30,9 +30,6 @@ public final class GameEventsManager extends JavaPlugin {
         registerCommands();
         registerListeners();
 
-        // initialize config
-        getConfig().options().copyDefaults();
-        getConfig();
 
         if (!new File(getServer().getWorldContainer(), "RNGSurvival").exists()) {
             // create the world for RNGSurvival
@@ -48,6 +45,7 @@ public final class GameEventsManager extends JavaPlugin {
 
             getLogger().info("A new world has been created for RNGSurvival!");
         } else {
+            getServer().getWorlds().add(Bukkit.getWorld("RNGSurvival"));
             getConfig().set("RNGSurvivalSpawn", getConfig().getLocation("RNGSurvivalSpawn"));
         }
 

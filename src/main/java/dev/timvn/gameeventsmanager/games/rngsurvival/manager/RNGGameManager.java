@@ -31,9 +31,6 @@ public class RNGGameManager {
     // initialize the plugin for later use
     private final GameEventsManager plugin;
 
-    // initialize the main class!
-    GameEventsManager mainClass = GameEventsManager.getPlugin(GameEventsManager.class);
-
     // set default state to be inactive
     public RNGGameStates RNGGameStates = dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameStates.INACTIVE;
 
@@ -45,6 +42,7 @@ public class RNGGameManager {
     private final CraftManager craftManager;
 
     public RNGGameManager(GameEventsManager plugin) {
+        // connect the GameManager with the plugin to make it not static!!!!
         this.plugin = plugin;
 
         this.blockManager = new BlockManager(this);
@@ -74,7 +72,7 @@ public class RNGGameManager {
                 currentGameState = "STARTING";
                 // Countdown Start!
 
-                final int[] countdownStarter = {5}; // Game starting countdown
+                final int[] countdownStarter = {6}; // Game starting countdown
 
                 final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
                 final Runnable runnable = () -> {
@@ -324,7 +322,6 @@ public class RNGGameManager {
                 break;
             case END:
                 currentGameState = "END";
-                Bukkit.broadcastMessage("Deathmatch has ended. Winner determined?");
                 Bukkit.broadcastMessage(RNGSurvival.Prefix + "The game will automatically be terminated in 20 seconds.");
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     public void run() {

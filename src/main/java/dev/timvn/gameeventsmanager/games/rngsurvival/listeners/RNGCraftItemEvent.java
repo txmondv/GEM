@@ -24,18 +24,24 @@ public class RNGCraftItemEvent implements Listener {
     @EventHandler
     private void onCraft(CraftItemEvent e) {
 
-        // event is 1/5 to be triggered
+        // event is 1/3 to be triggered
         if ((int) (Math.random() * 3) + 1 != 1) {
             return;
         }
 
+        // FIRST copy item data, then remove it (otherwise amount would be 0, you also couldn't just set it to 1 afterwards because the player can craft up to 64 at a time!)
         final ItemStack itemStack = Objects.requireNonNull(e.getInventory().getResult()).clone();
+
+        // check if the item has durability
         if (itemStack.getItemMeta() instanceof Damageable) {
+
+            // remove the crafted item from the inventory
+            e.getInventory().getResult().setAmount(0);
+
             if (itemStack.getType().getMaxDurability() == 0) {
                 return;
             }
 
-            e.setCancelled(true);
 
             final Player p = (Player)e.getViewers().get(0);
             final int result = RNGSurvival.roll(p);
@@ -43,7 +49,6 @@ public class RNGCraftItemEvent implements Listener {
                 return;
             }
 
-            e.getInventory().clear();
             p.closeInventory();
             (new BukkitRunnable() {
                 public void run() {
@@ -59,25 +64,41 @@ public class RNGCraftItemEvent implements Listener {
 
                     switch (result) {
                         case 20:
-                            // concept: add enchantments to the sword
+                            // concept: insane enchantments
                             if (Enchantment.DIG_SPEED.canEnchantItem(itemStack)) {
-                                itemStack.addEnchantment(Enchantment.DIG_SPEED, 1);
+                                itemStack.addUnsafeEnchantment(Enchantment.DIG_SPEED, 5);
                             }
 
-                            if (Enchantment.DURABILITY.canEnchantItem(itemStack)) {
-                                itemStack.addEnchantment(Enchantment.DURABILITY, 1);
-                            }
+                            itemStack.getItemMeta().setUnbreakable(true);
 
                             if (Enchantment.PROTECTION_ENVIRONMENTAL.canEnchantItem(itemStack)) {
-                                itemStack.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
+                                itemStack.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 5);
                             }
-
                             if (Enchantment.DAMAGE_ALL.canEnchantItem(itemStack)) {
-                                itemStack.addEnchantment(Enchantment.DAMAGE_ALL, 1);
+                                itemStack.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 5);
                             }
-                        case 19:
-                            // concept:
 
+                            p.sendMessage(RNGSurvival.Prefix + "Amazing! You have rolled a §a" + result + "§7!");
+                            p.sendMessage(RNGSurvival.Prefix + "Your item is unbreakable and super op!");
+                            break;
+                        case 19:
+                            // concept: insane enchantments but one level lower
+                            if (Enchantment.DIG_SPEED.canEnchantItem(itemStack)) {
+                                itemStack.addUnsafeEnchantment(Enchantment.DIG_SPEED, 4);
+                            }
+                            if (Enchantment.DURABILITY.canEnchantItem(itemStack)) {
+                                itemStack.addUnsafeEnchantment(Enchantment.DURABILITY, 3);
+                            }
+                            if (Enchantment.PROTECTION_ENVIRONMENTAL.canEnchantItem(itemStack)) {
+                                itemStack.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
+                            }
+                            if (Enchantment.DAMAGE_ALL.canEnchantItem(itemStack)) {
+                                itemStack.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 4);
+                            }
+
+                            p.sendMessage(RNGSurvival.Prefix + "Very nice, you rolled a §a" + result + "§7!");
+                            p.sendMessage(RNGSurvival.Prefix + "Your item got some pretty decent buffs.");
+                            break;
                         case 18:
                             // concept:
                         case 17:
@@ -110,11 +131,14 @@ public class RNGCraftItemEvent implements Listener {
                             // concept:
                         case 3:
                             // concept:
-                            break;
                         case 2:
                             // concept:
                         case 1:
-                            // concept:
+                            // concept: take a random item from inventory
+
+                            ItemStack itemInRandomSlot = Objects.requireNonNull(p.getInventory().getItem((int) ((Math.random() * (20 - 1)) + 1)));
+                            itemInRandomSlot.setAmount(0);
+
                         default:
                             break;
                     }

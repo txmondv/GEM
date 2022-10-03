@@ -20,7 +20,7 @@ public class EventStartCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-
+        // store events in an array to prevent repeated code (1)
         String[] eventsList = {
                 "RNGSurvival"
         };
@@ -32,15 +32,17 @@ public class EventStartCommand implements CommandExecutor {
                 sender.sendMessage(GameEventsManager.PluginPrefix + "§7Choose one from the ones listed below:");
                 sender.sendMessage("");
 
-                for(int i = 0; i < eventsList.length; i++) {
-                    sender.sendMessage("§8» §7" + eventsList[i]);
+                // send a message for every event in the array to prevent repeated code (2)
+                for (String s : eventsList) {
+                    sender.sendMessage("§8» §7" + s);
                 }
 
                 sender.sendMessage("");
 
-                return false;
+                return true;
             }
 
+            // put event name to lower case to make the command more usable (capitalization does not matter)
             String eventName = args[0].toLowerCase(Locale.ROOT);
 
             switch(eventName) {
@@ -51,6 +53,7 @@ public class EventStartCommand implements CommandExecutor {
                     if(args.length > 1) {
                         if(GameEventsManager.managerBusy && GameEventsManager.currentGame == "rngsurvival") {
                             if (args[1].equalsIgnoreCase("stop")) {
+                                // set the default
                                 if (args.length == 2) {
                                     RNGGameManager.stopGame(sender, 30);
                                     break;
@@ -60,6 +63,7 @@ public class EventStartCommand implements CommandExecutor {
                                 }
                             }
                         } else {
+                            // if the game isn't running, it cannot be stopped!
                             sender.sendMessage(GameEventsManager.PluginPrefix + "RNGSurvival is not active/running.");
                             sender.sendMessage(GameEventsManager.PluginPrefix + "Use '/check manager'.");
                             break;

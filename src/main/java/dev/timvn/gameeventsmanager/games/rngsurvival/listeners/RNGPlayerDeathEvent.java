@@ -14,12 +14,15 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class RNGPlayerDeathEvent implements Listener {
 
+    private RNGGameManager RNGGameManager;
+
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
+
+
 
         Player p = e.getEntity().getPlayer();
 
@@ -37,7 +40,13 @@ public class RNGPlayerDeathEvent implements Listener {
 
             if(Players.size() == 1) {
                 Bukkit.broadcastMessage(RNGSurvival.Prefix + "§a" + Players.get(0).getDisplayName() + " §7has won the game!");
-                // ToDo: Cancel game
+                RNGGameManager.setGameState(RNGGameStates.END);
+            }
+
+            if(Players.size() == 0) {
+                Bukkit.broadcastMessage(RNGSurvival.Prefix + "§7You have died and the game is over!");
+                Bukkit.broadcastMessage(RNGSurvival.Prefix + "§7Hint: The game is more fun if you don't play alone :)");
+                RNGGameManager.setGameState(RNGGameStates.END);
             }
 
             EntityDamageEvent lastDamageCause = e.getEntity().getLastDamageCause();
