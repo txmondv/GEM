@@ -17,12 +17,10 @@ import java.util.ArrayList;
 
 public class RNGPlayerDeathEvent implements Listener {
 
-    private RNGGameManager RNGGameManager;
+    RNGGameManager RNGGameManager;
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
-
-
 
         Player p = e.getEntity().getPlayer();
 
@@ -39,8 +37,7 @@ public class RNGPlayerDeathEvent implements Listener {
             }
 
             if(Players.size() == 1) {
-                Bukkit.broadcastMessage(RNGSurvival.Prefix + "§a" + Players.get(0).getDisplayName() + " §7has won the game!");
-                RNGGameManager.setGameState(RNGGameStates.END);
+                RNGGameManager.naturalGameEnd(p);
             }
 
             if(Players.size() == 0) {

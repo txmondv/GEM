@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
 
-import java.nio.channels.NonWritableChannelException;
 import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -392,6 +391,11 @@ public class RNGGameManager {
                 setGameState(dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameStates.INACTIVE);
             }
         }, seconds * 20);
+    }
+
+    public void naturalGameEnd(Player p) {
+        Bukkit.broadcastMessage(RNGSurvival.Prefix + "§a" + p.getDisplayName() + " §7has won the game!");
+        setGameState(dev.timvn.gameeventsmanager.games.rngsurvival.manager.RNGGameStates.END);
     }
 
 
